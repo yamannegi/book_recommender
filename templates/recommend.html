@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommender System</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #1c1c1c; /* Dark background */
+            border-bottom: 2px solid #00a65a; /* Green accent border */
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00a65a !important; /* Vibrant green color */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .navbar-nav > li > a {
+            color: white !important;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .navbar-nav > li > a:hover {
+            color: #00a65a !important; /* Green hover effect */
+        }
+        .navbar-nav > .active > a {
+            color: #00a65a !important; /* Active link stays green */
+        }
+
+        /* Page-specific styles */
+        h1 {
+            font-size: 50px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 80px; /* Adjust for fixed navbar */
+            color: #00a65a;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .subheading {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 20px;
+            color: #ccc;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Form Styling */
+        .form-control {
+            background-color: #333;
+            border: 1px solid #00a65a;
+            color: white;
+            font-size: 18px;
+            width: 100%;
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+            font-size: 16px; /* Reduced font size */
+            width: 100%;
+            height: 40px;  /* Reduced height */
+            transition: background-color 0.3s;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .card {
+            background-color: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            margin-right: 10px;
+            margin-left: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .card-body p {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .col-md-3 {
+            padding: 5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #00a65a;
+            color: white;
+            font-size: 14px;
+            margin-top: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">My Book Recommender</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li class="{% if request.path == '/' %}active{% endif %}"><a href="/">Home</a></li>
+                    <li class="{% if request.path == '/recommend' %}active{% endif %}"><a href="/recommend">Recommend</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 100px;">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Recommend Books</h1>
+                <form action="/recommend_books" method="post">
+                    <input name="user_input" type="text" class="form-control" placeholder="Enter Book Name or Author"><br>
+                    <input type="submit" class="btn btn-lg btn-warning">
+                </form>
+            </div>
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+            {% if data %}
+                {% for i in data %}
+                    <div class="col-md-3" style="margin-top:50px">
+                        <div class="card">
+                            <div class="card-body">
+                                <img class="card-img-top" src="{{i[2]}}">
+                                <p class="text-white">{{i[0]}}</p>
+                                <h4 class="text-white">{{i[1]}}</h4>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        © 2024 My Book Recommender. All rights reserved.
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
